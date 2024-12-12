@@ -1,0 +1,40 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: cmgd-data-api
+build:
+  artifacts:
+    - image: seandavi/cmgd-data-api
+      context: .
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+deploy:
+  kubectl:
+    manifests:
+      - kubernetes/deployment.yaml
+      - kubernetes/service.yaml
+      - kubernetes/secrets.yaml
+    flags:
+      global:
+        - "--namespace=dev"
+profiles:
+  - name: prod
+    build:
+      artifacts:
+        - image: seandavi/cmgd-data-api-prod
+          context: .
+          docker:
+            dockerfile: Dockerfile
+    deploy:
+      kubectl:
+        manifests:
+          - kubernetes/deployment.yaml
+          - kubernetes/service.yaml
+          - kubernetes/secrets.yaml
+          - kubernetes/ingressroute.yaml
+        flags:
+          global:
+            - "--namespace=default"
