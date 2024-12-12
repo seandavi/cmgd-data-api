@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cmgd-data-api-service
+spec:
+  selector:
+    app: cmgd-data-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

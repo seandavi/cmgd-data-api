@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cmgd-data-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmgd-data-api
+  template:
+    metadata:
+      labels:
+        app: cmgd-data-api
+    spec:
+      containers:
+      - name: cmgd-data-api
+        image: seandavi/cmgd-data-api
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+        env:
+          - name: CLICKHOUSE_USER
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-secret
+                key: CLICKHOUSE_USER
+          - name: CLICKHOUSE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-secret
+                key: CLICKHOUSE_PASSWORD
+          - name: CLICKHOUSE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-secret
+                key: CLICKHOUSE_HOST
+          - name: CLICKHOUSE_PORT
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-secret
+                key: CLICKHOUSE_PORT
+          - name: CLICKHOUSE_DB
+            valueFrom:
+              secretKeyRef:
+                name: clickhouse-secret
+                key: CLICKHOUSE_DB
+        volumeMounts:
+        - name: clickhouse-secret
+          mountPath: /etc/clickhouse
+          readOnly: true
+      volumes:
+      - name: clickhouse-secret
+        secret:
+          secretName: clickhouse-secret
