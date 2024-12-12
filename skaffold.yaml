@@ -20,6 +20,12 @@ deploy:
     flags:
       global:
         - "--namespace=dev"
+portForward:
+  - resourceType: service
+    resourceName: cmgd-data-api-service
+    namespace: dev
+    port: 80
+    localPort: 8080
 profiles:
   - name: prod
     build:
